@@ -357,6 +357,64 @@ describe('AnswerController', () => {
             getAnswerByIdSpy.mockRestore()
         })
 
+        it('should handle null/undefined taskAnswers for anonymous answer', async () => {
+            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(answerController)), 'update')
+                .mockResolvedValue()
+
+            const getAnswerByIdSpy = jest.spyOn(answerController, 'getAnswerById')
+                .mockResolvedValue({
+                    taskAnswers: null
+                })
+
+            const { STUDY_TYPES } = require('@/shared/constants/methodDefinitions')
+            const mockPayload = {
+                toFirestore: jest.fn().mockReturnValue({ answer: 'data' })
+            }
+
+            await answerController.saveTestAnswer(mockPayload, 'answer-456', STUDY_TYPES.USER)
+
+            expect(getAnswerByIdSpy).toHaveBeenCalledWith('answer-456')
+            expect(updateSpy).toHaveBeenCalledWith(
+                'answers',
+                'answer-456',
+                expect.objectContaining({
+                    'taskAnswers.Ev1': { answer: 'data' }
+                })
+            )
+
+            updateSpy.mockRestore()
+            getAnswerByIdSpy.mockRestore()
+        })
+
+        it('should handle missing taskAnswers property for anonymous answer', async () => {
+            const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(answerController)), 'update')
+                .mockResolvedValue()
+
+            const getAnswerByIdSpy = jest.spyOn(answerController, 'getAnswerById')
+                .mockResolvedValue({
+                    // taskAnswers property is missing
+                })
+
+            const { STUDY_TYPES } = require('@/shared/constants/methodDefinitions')
+            const mockPayload = {
+                toFirestore: jest.fn().mockReturnValue({ answer: 'data' })
+            }
+
+            await answerController.saveTestAnswer(mockPayload, 'answer-456', STUDY_TYPES.USER)
+
+            expect(getAnswerByIdSpy).toHaveBeenCalledWith('answer-456')
+            expect(updateSpy).toHaveBeenCalledWith(
+                'answers',
+                'answer-456',
+                expect.objectContaining({
+                    'taskAnswers.Ev1': { answer: 'data' }
+                })
+            )
+
+            updateSpy.mockRestore()
+            getAnswerByIdSpy.mockRestore()
+        })
+
         it('should handle errors when saving test answer', async () => {
             const mockError = new Error('Update failed')
             const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(answerController)), 'update')
