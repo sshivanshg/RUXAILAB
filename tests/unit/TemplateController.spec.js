@@ -113,7 +113,6 @@ describe('TemplateController', () => {
       collection.mockReturnValue({})
       getDocs.mockResolvedValue({ docs: mockDocs })
 
-      // Mock the parent query method
       spies.readOne = jest.fn()
       const parentProto = Object.getPrototypeOf(
         Object.getPrototypeOf(templateController),

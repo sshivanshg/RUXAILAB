@@ -357,7 +357,7 @@ describe('AnswerController', () => {
             getAnswerByIdSpy.mockRestore()
         })
 
-        it('should handle null/undefined taskAnswers for anonymous answer', async () => {
+        it('anonymous answer when taskAnswers is null', async () => {
             const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(answerController)), 'update')
                 .mockResolvedValue()
 
@@ -386,14 +386,12 @@ describe('AnswerController', () => {
             getAnswerByIdSpy.mockRestore()
         })
 
-        it('should handle missing taskAnswers property for anonymous answer', async () => {
+        it('anonymous answer when taskAnswers not set', async () => {
             const updateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(answerController)), 'update')
                 .mockResolvedValue()
 
             const getAnswerByIdSpy = jest.spyOn(answerController, 'getAnswerById')
-                .mockResolvedValue({
-                    // taskAnswers property is missing
-                })
+                .mockResolvedValue({})
 
             const { STUDY_TYPES } = require('@/shared/constants/methodDefinitions')
             const mockPayload = {
